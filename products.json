@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Café frío mediano",
+    "description": "Café frío tamaño mediano",
+    "price": 500,
+    "thumbnail": "cafe_frio_mediano.jpg",
+    "code": "CFM",
+    "stock": 40
+  },
+  {
+    "id": 2,
+    "title": "Café caliente grande",
+    "description": "Café caliente tamaño grande",
+    "price": 700,
+    "thumbnail": "cafe_caliente_grande.jpg",
+    "code": "CCG",
+    "stock": 25
+  },
+  {
+    "id": 3,
+    "title": "Latte caliente grande",
+    "description": "Café latte (cafe con leche) caliente en vaso grande",
+    "price": 1500,
+    "thumbnail": "latte_caliente_grande.jpg",
+    "code": "LCG",
+    "stock": 25
+  },
+  {
+    "id": 4,
+    "title": "Café frío grande",
+    "description": "Café frío tamaño mediano",
+    "price": 1000,
+    "thumbnail": "cafe_frio_mediano.jpg",
+    "code": "CFG",
+    "stock": 40
+  },
+  {
+    "id": 5,
+    "title": "Tè Helado ",
+    "description": "Tè servido en frio en medida unica",
+    "price": 900,
+    "thumbnail": "cafe_caliente_grande.jpg",
+    "code": "TH",
+    "stock": 25
+  },
+  {
+    "id": 6,
+    "title": "Americano caliente grande",
+    "description": "Cafe rebajado con agua unicamente caliente en vaso grande",
+    "price": 1050,
+    "thumbnail": "cafe_frio_mediano.jpg",
+    "code": "ACG",
+    "stock": 40
+  },
+  {
+    "id": 7,
+    "title": "chocolatada fria pequeña",
+    "description": "Leche con chocolate en vaso pequeño",
+    "price": 400,
+    "thumbnail": "cafe_frio_mediano.jpg",
+    "code": "CHFP",
+    "stock": 40
+  },
+  {
+    "id": 8,
+    "title": "Chocolatada fria Grande",
+    "description": "Leche con chocolate en vaso grande",
+    "price": 600,
+    "thumbnail": "cafe_caliente_grande.jpg",
+    "code": "CHFG",
+    "stock": 25
+  }
+]
