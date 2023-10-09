@@ -1,0 +1,152 @@
+productManager.loadData()
+  .then(() => {
+    // Ruta para agregar un producto
+    app.post("/products", (req, res) => {
+      const { title, description, price, thumbnail, code, stock } = req.body;
+      productManager.addProduct(title, description, price, thumbnail, code, stock);
+    app.post("/api/products", (req, res) => {
+      const { title, description, code, price, stock, category, thumbnails } = req.body;
+
+      // Autogenerar el ID basado en el contador existente
+      const id = productManager.getNextProductId();
+
+      // Verificar que todos los campos obligatorios estén presentes
+      if (!title || !description || !code || !price || !stock) {
+        return res.status(400).json({ error: "Todos los campos obligatorios son requeridos" });
+      }
+
+      // Crear un nuevo producto con los campos proporcionados
+      const newProduct = {
+        id,
+        title,
+        description,
+        code,
+        price,
+        status: true, // Valor predeterminado para status
+        stock,
+        category,
+        thumbnails: thumbnails || [] // Si no se proporciona thumbnails, se establece como un arreglo vacío
+      };
+
+      // Agregar el nuevo producto utilizando el método de ProductManager
+      productManager.addProduct(newProduct);
+
+      // Responder con un mensaje de éxito
+      res.status(201).json({ message: "Producto agregado con éxito" });
+    });
+
+    // Ruta para obtener todos los productos
+    app.get("/products", (req, res) => {
+      let limit = req.query.limit;
+      limit = parseInt(limit);
+    // Ruta raíz POST /api/carts
+    app.post("/api/carts", (req, res) => {
+      // Autogenerar el ID del carrito
+      const cartId = productManager.getNextCartId();
+
+      // Crear un nuevo carrito con un arreglo de productos vacío
+      const newCart = {
+        id: cartId,
+        products: [],
+      };
+
+      // Agregar el nuevo carrito utilizando el método de ProductManager
+      productManager.addCart(newCart);
+
+      // Responder con un mensaje de éxito y el ID del carrito creado
+      res.status(201).json({ message: "Carrito creado con éxito", cartId });
+    });
+
+    // Ruta PUT /api/carts/:cid/product/:pid
+    app.put("/api/carts/:cid/product/:pid", (req, res) => {
+      const cartId = parseInt(req.params.cid);
+      const productId = parseInt(req.params.pid);
+
+      // Verifica si el carrito existe
+      const cart = productManager.getCartById(cartId);
+
+      if (!cart) {
+        return res.status(404).json({ error: "Carrito no encontrado" });
+      }
+
+      // Verifica si el producto existe
+      const product = productManager.getProductById(productId);
+
+      if (!product) {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
+
+      const allProducts = productManager.getProducts();
+      // Verifica si el producto ya está en el carrito
+      const existingProduct = cart.products.find((p) => p.id === productId);
+
+      if (!isNaN(limit)) {
+        const limitedProducts = allProducts.slice(0, limit);
+        res.json(limitedProducts);
+      if (existingProduct) {
+        // Si el producto ya está en el carrito, incrementa la cantidad
+        existingProduct.quantity++;
+      } else {
+        res.json(allProducts);
+        // Si el producto no está en el carrito, agrégalo con cantidad 1
+        cart.products.push({
+          id: productId,
+          quantity: 1,
+        });
+      }
+
+      // Actualiza el carrito en el ProductManager
+      productManager.updateCart(cart);
+
+      // Responde con el carrito actualizado
+      res.json(cart);
+    });
+
+    // Ruta para obtener un producto por ID
+    app.get("/products/:pid", (req, res) => {
+    // Ruta DELETE /api/carts/:cid/:pid
+    app.delete("/api/carts/:cid/:pid", (req, res) => {
+      const cartId = parseInt(req.params.cid);
+      const productId = parseInt(req.params.pid);
+      const product = productManager.getProductById(productId);
+      if (product) {
+        res.json(product);
+
+      const updatedCart = productManager.deleteProductFromCart(cartId, productId);
+
+      if (updatedCart) {
+        // Responder con el carrito actualizado
+        res.json(updatedCart);
+      } else {
+        res.status(404).json({ error: "Producto no encontrado" });
+        res.status(404).json({ error: "Carrito o producto no encontrado" });
+      }
+    });
+
+    // Ruta GET /api/carts/:cid
+    app.get("/api/carts/:cid", (req, res) => {
+      const cartId = parseInt(req.params.cid);
+
+      // Verifica si el carrito existe
+      const cart = productManager.getCartById(cartId);
+
+      if (!cart) {
+        return res.status(404).json({ error: "Carrito no encontrado" });
+      }
+
+      res.json(cart.products);
+    });
+
+    // Ruta para obtener un producto por ID (como se mostró en el código anterior)
+
+    // Enrutador para las rutas de productos (como se mostró en el código anterior)
+
+    // Enrutador para las rutas de carritos
+    const cartRouter = express.Router();
+
+    // Monta el enrutador de carritos en la ruta /api/carts
+    app.use("/api/carts", cartRouter);
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Servidor Express en ejecución en el puerto ${PORT}`);

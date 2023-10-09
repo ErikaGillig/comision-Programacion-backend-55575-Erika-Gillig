@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
+const expressHandlebars = require("express-handlebars");
+const WebSocket = require("ws");
+const fs = require("fs");
 const ProductManager = require("./ProductManager");
+
+// Configurar Handlebars como motor de plantillas
+app.engine("hbs", expressHandlebars({ extname: "hbs" }));
+app.set("view engine", "hbs");
+app.set("views", __dirname + "/views");
 
 app.use(express.json());
 
@@ -10,140 +18,48 @@ const productManager = new ProductManager(dataFilePath);
 // Cargar los datos al iniciar la aplicación
 productManager.loadData()
   .then(() => {
-    // Ruta para agregar un producto
-    app.post("/api/products", (req, res) => {
-      const { title, description, code, price, stock, category, thumbnails } = req.body;
+    // Rutas para productos (ya definidas)
 
-      // Autogenerar el ID basado en el contador existente
-      const id = productManager.getNextProductId();
+    // Rutas para carritos (ya definidas)
 
-      // Verificar que todos los campos obligatorios estén presentes
-      if (!title || !description || !code || !price || !stock) {
-        return res.status(400).json({ error: "Todos los campos obligatorios son requeridos" });
-      }
-
-      // Crear un nuevo producto con los campos proporcionados
-      const newProduct = {
-        id,
-        title,
-        description,
-        code,
-        price,
-        status: true, // Valor predeterminado para status
-        stock,
-        category,
-        thumbnails: thumbnails || [] // Si no se proporciona thumbnails, se establece como un arreglo vacío
-      };
-
-      // Agregar el nuevo producto utilizando el método de ProductManager
-      productManager.addProduct(newProduct);
-
-      // Responder con un mensaje de éxito
-      res.status(201).json({ message: "Producto agregado con éxito" });
-    });
-
-    // Ruta raíz POST /api/carts
-    app.post("/api/carts", (req, res) => {
-      // Autogenerar el ID del carrito
-      const cartId = productManager.getNextCartId();
-
-      // Crear un nuevo carrito con un arreglo de productos vacío
-      const newCart = {
-        id: cartId,
-        products: [],
-      };
-
-      // Agregar el nuevo carrito utilizando el método de ProductManager
-      productManager.addCart(newCart);
-
-      // Responder con un mensaje de éxito y el ID del carrito creado
-      res.status(201).json({ message: "Carrito creado con éxito", cartId });
-    });
-
-    // Ruta PUT /api/carts/:cid/product/:pid
-    app.put("/api/carts/:cid/product/:pid", (req, res) => {
-      const cartId = parseInt(req.params.cid);
-      const productId = parseInt(req.params.pid);
-
-      // Verifica si el carrito existe
-      const cart = productManager.getCartById(cartId);
-
-      if (!cart) {
-        return res.status(404).json({ error: "Carrito no encontrado" });
-      }
-
-      // Verifica si el producto existe
-      const product = productManager.getProductById(productId);
-
-      if (!product) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-      }
-
-      // Verifica si el producto ya está en el carrito
-      const existingProduct = cart.products.find((p) => p.id === productId);
-
-      if (existingProduct) {
-        // Si el producto ya está en el carrito, incrementa la cantidad
-        existingProduct.quantity++;
-      } else {
-        // Si el producto no está en el carrito, agrégalo con cantidad 1
-        cart.products.push({
-          id: productId,
-          quantity: 1,
-        });
-      }
-
-      // Actualiza el carrito en el ProductManager
-      productManager.updateCart(cart);
-
-      // Responde con el carrito actualizado
-      res.json(cart);
-    });
-
-    // Ruta DELETE /api/carts/:cid/:pid
-    app.delete("/api/carts/:cid/:pid", (req, res) => {
-      const cartId = parseInt(req.params.cid);
-      const productId = parseInt(req.params.pid);
-
-      const updatedCart = productManager.deleteProductFromCart(cartId, productId);
-
-      if (updatedCart) {
-        // Responder con el carrito actualizado
-        res.json(updatedCart);
-      } else {
-        res.status(404).json({ error: "Carrito o producto no encontrado" });
-      }
-    });
-
-    // Ruta GET /api/carts/:cid
-    app.get("/api/carts/:cid", (req, res) => {
-      const cartId = parseInt(req.params.cid);
-
-      // Verifica si el carrito existe
-      const cart = productManager.getCartById(cartId);
-
-      if (!cart) {
-        return res.status(404).json({ error: "Carrito no encontrado" });
-      }
-
-      res.json(cart.products);
-    });
-
-    // Ruta para obtener un producto por ID (como se mostró en el código anterior)
-
-    // Enrutador para las rutas de productos (como se mostró en el código anterior)
-
-    // Enrutador para las rutas de carritos
-    const cartRouter = express.Router();
-
-    // Monta el enrutador de carritos en la ruta /api/carts
-    app.use("/api/carts", cartRouter);
+    // Resto del código de rutas (si hay más)
 
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+
+    // Crear servidor HTTP
+    const server = app.listen(PORT, () => {
       console.log(`Servidor Express en ejecución en el puerto ${PORT}`);
+    });
+
+    // Configurar WebSocket
+    const wss = new WebSocket.Server({ server });
+
+    // Manejar conexiones WebSocket
+    wss.on("connection", (ws) => {
+      console.log("Nueva conexión WebSocket");
+
+      // Maneja mensajes WebSocket entrantes
+      ws.on("message", (message) => {
+        console.log(`Mensaje recibido: ${message}`);
+        // Aquí puedes implementar la lógica para manejar los mensajes WebSocket
+      });
+
+      // Manejar cierre de conexión
+      ws.on("close", () => {
+        console.log("Conexión WebSocket cerrada");
+      });
+
+      // Resto de la configuración de WebSocket, como manejar eventos
+      // y comunicación en tiempo real con los clientes
     });
   })
   .catch((error) => {
     console.error("Error al cargar los datos:", error);
   });
+
+// Ruta para mostrar la vista de productos en tiempo real
+app.get("/realtimeproducts", (req, res) => {
+  // Obtén la lista de productos (puedes obtenerla de tu ProductManager)
+  const products = productManager.getProducts();
+  res.render("realTimeProducts", { products });
+});

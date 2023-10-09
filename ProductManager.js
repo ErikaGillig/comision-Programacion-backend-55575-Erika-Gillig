@@ -1,4 +1,20 @@
 const fs = require("fs");
+const express = require("express");
+const app = express();
+const expressHandlebars = require("express-handlebars");
+
+// Configurar Handlebars como motor de plantillas
+app.engine("hbs", expressHandlebars({ extname: "hbs" }));
+app.set("view engine", "hbs");
+app.set("views", __dirname + "/views");
+
+// Resto de la configuración de la aplicación, rutas, WebSockets, etc.
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor Express en ejecución en el puerto ${PORT}`);
+});
+
 
 class ProductManager {
   constructor(dataFilePath) {
