@@ -1,9 +1,10 @@
 // Importa los módulos necesarios
 const express = require("express");
 const mongoose = require("mongoose");
-const expressHandlebars = require("express-handlebars");
+const expressHandlebars = require('express-handlebars');
 const WebSocket = require("ws");
-const ProductManager = require("./ProductManager"); // Si aún es necesario
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const ProductManager = require("./ProductManager");
 
 // Crea una instancia de Express
 const app = express();
@@ -74,4 +75,31 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor Express en ejecución en el puerto ${PORT}`);
 });
+  
+// Coneccion a DB 
 
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://dbUser_Main:<dbusermain90>@cofeedb.rfkilot.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
