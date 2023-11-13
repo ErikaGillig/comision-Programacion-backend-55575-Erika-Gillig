@@ -1,16 +1,16 @@
 // Importa los módulos necesarios
 const express = require("express");
 const mongoose = require("mongoose");
-const expressHandlebars = require('express-handlebars');
+// const expressHandlebars = require('express-handlebars');
 const WebSocket = require("ws");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+
 const ProductManager = require("./ProductManager");
 
 // Crea una instancia de Express
 const app = express();
 
 // Conecta a la base de datos MongoDB
-mongoose.connect("mongodb://localhost:27017/CofeeDB", {
+mongoose.connect("mongodb://localhost:27017/tu_basedatos", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -22,9 +22,12 @@ db.once("open", () => {
 });
 
 // Configura Handlebars como motor de plantillas
-app.engine("hbs", expressHandlebars({ extname: "hbs" }));
-app.set("view engine", "hbs");
-app.set("views", __dirname + "/views");
+const expressHandlebars = require('express-handlebars');
+
+app.engine('handlebars', expressHandlebars({ extname: 'hbs' }));
+app.set('view engine', 'handlebars');
+app.set('views', __dirname + '/views');
+
 
 // Configura WebSocket
 const server = app.listen(PORT, () => {
@@ -47,7 +50,7 @@ wss.on("connection", (ws) => {
     console.log("Conexión WebSocket cerrada");
   });
 
-  // Resto de la configuración de WebSocket, manejar eventos
+  // Resto de la configuración de WebSocket, como manejar eventos
   // y comunicación en tiempo real con los clientes
 });
 
@@ -77,11 +80,12 @@ app.listen(PORT, () => {
 });
   
 // Coneccion a DB 
-// user= dbUser_main password= dbusermain90
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://dbUser_Main:<dbusermain90>@cofeedb.rfkilot.mongodb.net/?retryWrites=true&w=majority";
 
-// Creacion MongoCLient con MongoClientOption para setear la API
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://dbUser_Main:dbusermain90@cofeedb.rfkilot.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -92,9 +96,9 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Coneccion cliente-servidor
+    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // envio de señal para confirmar la correcta ejecución 
+    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
@@ -103,6 +107,3 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-// Para la comanda en VSCODE
-// mongodb+srv://dbUser_Main:<dbusermain90>@cofeedb.rfkilot.mongodb.net/
