@@ -103,3 +103,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+// Para la comanda en VSCODE
+// mongodb+srv://dbUser_Main:<dbusermain90>@cofeedb.rfkilot.mongodb.net/
