@@ -1,5 +1,12 @@
+
 [
-  {
+  
+{
+  "_id": {
+    "$oid": "6556bc4873f30f4e0ebe8f6d"
+  }
+}, 
+{
     "id": 1,
     "title": "Café frío mediano",
     "description": "Café frío tamaño mediano",
