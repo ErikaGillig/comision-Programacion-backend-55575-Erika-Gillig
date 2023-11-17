@@ -21,8 +21,6 @@ db.once("open", () => {
   app.set('view engine', 'handlebars');
   app.set('views', __dirname + '/views');
 
-  // Resto del código (configuración de WebSocket, importación de rutas, etc.)
-
   // Puerto donde se ejecutará el servidor
   const PORT = process.env.PORT || 3000;
 
@@ -32,11 +30,11 @@ db.once("open", () => {
   });
   const wss = new WebSocket.Server({ server });
 
-  // Maneja conexiones WebSocket
+  // Maneja las conexiones WebSocket
   wss.on("connection", (ws) => {
     console.log("Nueva conexión WebSocket");
 
-    // Maneja mensajes WebSocket entrantes
+    // Maneja los mensajes WebSocket entrantes
     ws.on("message", (message) => {
       console.log(`Mensaje recibido: ${message}`);
       // Aquí puedes implementar la lógica para manejar los mensajes WebSocket
@@ -46,10 +44,6 @@ db.once("open", () => {
     ws.on("close", () => {
       console.log("Conexión WebSocket cerrada");
     });
-
-    // Resto de la configuración de WebSocket, como manejar eventos
-    // y comunicación en tiempo real con los clientes
-  });
 
   // Importa y configura el modelo de Producto (definido con Mongoose)
   const Product = require("./models/Product");
@@ -73,7 +67,7 @@ db.once("open", () => {
 
 // Coneccion a DB 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://dbUser_Main:dbusermain90@cofeedb.rfkilot.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://dbUser_Main:dbusermain@cofeedb.rfkilot.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
