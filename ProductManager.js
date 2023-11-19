@@ -1,76 +1,62 @@
-const fs = require("fs");
+const mongoose = require('mongoose');
+
+const productSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  price: Number,
+  thumbnail: String,
+  code: String,
+  stock: Number,
+});
+
+const ProductModel = mongoose.model('Product', productSchema);
 
 class ProductManager {
-  constructor(dataFilePath) {
-    this.dataFilePath = dataFilePath;
-    this.products = [];
-    this.productIdCounter = 1;
-  }
-
   async loadData() {
     try {
-      const data = await fs.promises.readFile(this.dataFilePath, "utf-8");
-      this.products = JSON.parse(data);
-      if (Array.isArray(this.products)) {
-        const maxId = Math.max(...this.products.map((product) => product.id), 0);
-        this.productIdCounter = maxId + 1;
-      }
+      // Aquí puedes realizar la lógica necesaria para cargar datos desde MongoDB
+      this.products = await ProductModel.find();
+      // Resto del código...
     } catch (error) {
       this.products = [];
       throw error;
     }
   }
 
-  saveDataToFile() {
-    try {
-      const data = JSON.stringify(this.products, null, 2);
-      fs.writeFileSync(this.dataFilePath, data, "utf-8");
-    } catch (error) {
-      console.error("Error al guardar los datos en el archivo:", error);
-    }
-  }
+  // Resto de tu código adaptado para trabajar con Mongoose...
 
-  addProduct(title, description, price, thumbnail, code, stock) {
+  // Por ejemplo, el método para agregar un producto podría ser así:
+  async addProduct(title, description, price, thumbnail, code, stock) {
     if (!title || !description || !price || !thumbnail || !code || !stock) {
       console.error("Todos los campos son obligatorios");
       return;
     }
 
-    const existingProduct = this.products.find((product) => product.code === code);
-    if (existingProduct) {
-      console.error("Ya existe un producto con el mismo código");
-      return;
-    }
+    try {
+      const existingProduct = await ProductModel.findOne({ code });
+      if (existingProduct) {
+        console.error("Ya existe un producto con el mismo código");
+        return;
+      }
 
-    const newProduct = {
-      id: this.productIdCounter++,
-      title,
-      description,
-      price,
-      thumbnail,
-      code,
-      stock,
-    };
+      const newProduct = new ProductModel({
+        title,
+        description,
+        price,
+        thumbnail,
+        code,
+        stock,
+      });
 
-    this.products.push(newProduct);
+      await newProduct.save();
 
-    console.log("Producto agregado:", newProduct);
-    this.saveDataToFile();
-  }
-
-  getProducts() {
-    return this.products;
-  }
-
-  getProductById(id) {
-    const product = this.products.find((product) => product.id === id);
-    if (product) {
-      return product;
-    } else {
-      console.error("Producto no encontrado");
-      return null;
+      console.log("Producto agregado:", newProduct);
+    } catch (error) {
+      console.error("Error al agregar el producto:", error);
     }
   }
+
+  // Resto de tus métodos adaptados para trabajar con Mongoose...
 }
 
 module.exports = ProductManager;
