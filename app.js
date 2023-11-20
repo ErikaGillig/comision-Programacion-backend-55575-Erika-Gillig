@@ -6,11 +6,10 @@ const WebSocket = require("ws");
 // Crea una instancia de Express
 const app = express();
 
-// Agrega esto en tu archivo app.js
 app.use(express.static(__dirname + '/views'));
 
-app.get('/products-real-time', (req, res) => {
-  res.sendFile(__dirname + '/views/public.html'); // Ajusta la ruta según la ubicación de tu archivo HTML
+app.get('/Product', (req, res) => {
+  res.sendFile(__dirname + '/views/public.html');
 });
 
 // Importa los archivos de rutas
