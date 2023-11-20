@@ -42,4 +42,3 @@ const server = app.listen(PORT, () => {
 
 const wss = new WebSocket.Server({ server });
 
-// Resto del código de WebSocket y otras configuraciones
