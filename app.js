@@ -6,22 +6,6 @@ const WebSocket = require("ws");
 // Crea una instancia de Express
 const app = express();
 
-app.use(express.static(__dirname + '/views'));
-
-app.get('/Product', (req, res) => {
-  res.sendFile(__dirname + '/views/public.html');
-});
-
-// Importa los archivos de rutas
-const productRoutes = require("./Routes/products");
-const cartRoutes = require("./Routes/carts");
-const viewRoutes = require("./Routes/views");
-
-// Configurar las rutas en la aplicación
-app.use("/api/products", productRoutes);
-app.use("/api/carts", cartRoutes);
-app.use("/views", viewRoutes);
-
 // Conección a la base de datos MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/Cofeedb", {
   useNewUrlParser: true,
