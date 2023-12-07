@@ -1,3 +1,5 @@
+<!-- src/views/public.html -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,22 +13,19 @@
         {{/each}}
     </ul>
 
-    
-<!-- Agrega el script de Socket.IO -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
-<script>
-    const socket = new WebSocket("ws://localhost:3000"); // Ajusta la URL según la configuración de tu servidor WebSocket
+    <!-- Agrega el script de Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        const socket = new WebSocket("ws://localhost:3000"); // Ajusta la URL según la configuración de tu servidor WebSocket
 
-    socket.addEventListener("message", (event) => {
-        const products = JSON.parse(event.data);
+        socket.addEventListener("message", (event) => {
+            const products = JSON.parse(event.data);
 
-        // Actualiza la lista de productos en la vista
-        const productList = document.getElementById("product-list");
-        productList.innerHTML = products.map((product) => `<li>${product.title}</li>`).join("");
-    });
-</script>
-
-
-
+            // Actualiza la lista de productos en la vista
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = products.map((product) => `<li>${product.title}</li>`).join("");
+        });
+    </script>
 </body>
 </html>
+
