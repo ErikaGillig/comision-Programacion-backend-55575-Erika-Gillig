@@ -6,8 +6,17 @@ const WebSocket = require("ws");
 // Crea una instancia de Express
 const app = express();
 
+// Configura Handlebars como motor de plantillas
+app.engine("hbs", expressHandlebars({ extname: "hbs" }));
+app.set("view engine", "hbs");
+app.set("views", __dirname + "/views");
+
+// Puerto de escucha
+const PORT = process.env.PORT || 5500;
+
 // Conección a la base de datos MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/Cofeedb", {
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://dbUser_Main:dbusermain@cofeedb.rfkilot.mongodb.net/"; 
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -16,11 +25,6 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Error de conexión a MongoDB"));
 db.once("open", () => {
   console.log("Conexión a MongoDB exitosa");
-
-  // Configura Handlebars como motor de plantillas
-  app.engine("handlebars", expressHandlebars({ extname: "hbs" }));
-  app.set("view engine", "handlebars");
-  app.set("views", __dirname + "/views");
 
   // Configura WebSocket
   const server = app.listen(PORT, () => {
@@ -54,4 +58,3 @@ db.once("open", () => {
     });
   });
 });
-

@@ -8,6 +8,7 @@ const GitHubStrategy = require("passport-github").Strategy;
 const session = require('express-session');
 
 const app = express();
+
 // Configuración de sesión
 app.use(session({ secret: 'bdaaca0541adfa7097e6e035408bb26ea21a4ce', resave: true, saveUninitialized: true }));
 
@@ -15,8 +16,18 @@ app.use(session({ secret: 'bdaaca0541adfa7097e6e035408bb26ea21a4ce', resave: tru
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Función ficticia para verificar la contraseña con bcrypt
+const verificarContraseña = async (password, hashedPassword) => {
+  try {
+    return await bcrypt.compare(password, hashedPassword);
+  } catch (error) {
+    console.error('Error al verificar la contraseña:', error);
+    return false;
+  }
+};
+
 // Middleware para autenticación
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -28,17 +39,21 @@ const authenticate = (req, res, next) => {
     .split(':');
 
   // Comparar con el usuario y contraseña permitidos (ajusta esto según tu lógica)
-  if (username === 'dbUser_Main' && verificarContraseña(password)) {
-    return next();
-  } else {
-    return res.status(401).json({ error: 'Credenciales inválidas' });
+  try {
+    if (username === 'dbUser_Main' && await verificarContraseña(password, 'hashedPassword')) {
+      return next();
+    } else {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+  } catch (error) {
+    console.error('Error al autenticar:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+
 // Usa el middleware de autenticación en las rutas que requieran autenticación
 app.use('/api', authenticate);
-
-// ... (Código anterior)
 
 // Ruta de callback después de la autorización de GitHub
 app.get('/auth/github/callback',
@@ -67,7 +82,7 @@ app.get('/unauthorized', (req, res) => {
 });
 
 // Puerto de escucha
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => {
   console.log(`Servidor Express en ejecución en el puerto ${PORT}`);
 });

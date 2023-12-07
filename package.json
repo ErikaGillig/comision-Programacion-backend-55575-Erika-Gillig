@@ -17,6 +17,8 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "mongoose": "^8.0.1",
+    "passport": "^0.6.0",
+    "passport-github": "^1.1.0",
     "websocket": "^1.0.34"
   }
 }
